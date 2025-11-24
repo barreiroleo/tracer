@@ -8,6 +8,8 @@ project(
 
 inc_lib = include_directories('lib')
 
+subdir('lib/args')
+
 executable(
   'tracer',
   'src/main.cpp',

@@ -19,6 +19,9 @@ build:
 test:
 	meson test -C build
 
+test-verbose:
+	meson test -C build --verbose
+
 test-valgrind:
 	meson test -C build --wrap='valgrind'
 
