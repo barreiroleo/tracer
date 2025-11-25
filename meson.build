@@ -6,13 +6,21 @@ project(
   default_options: ['warning_level=3', 'cpp_std=c++23'],
 )
 
-inc_lib = include_directories('lib')
-
 subdir('lib/args')
+# inc_lib = include_directories('lib')
 
-executable(
+tracer_exe = executable(
   'tracer',
-  'src/main.cpp',
-  dependencies: [],
-  include_directories: inc_lib,
+  'src/tracer.cpp',
+  dependencies: [args_dep],
 )
+
+client_exe = executable(
+  'client',
+  'tests/client_test.cpp',
+  dependencies: [args_dep],
+)
+
+pipe_args = ['--pipe', '/var/run/tracer.pipe']
+test('client_test', client_exe, args: pipe_args, timeout: 5)
+test('server_test', tracer_exe, args: pipe_args, timeout: 5)
