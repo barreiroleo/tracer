@@ -1,0 +1,7 @@
+# https://clang-format-configurator.site
+---
+BasedOnStyle: WebKit
+
+---
+Language: Cpp
+IndentWidth: 4

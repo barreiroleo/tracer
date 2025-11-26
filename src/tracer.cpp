@@ -1,7 +1,8 @@
 #include <src/IPC/server.hpp>
 #include <src/cli_opts.hpp>
 
-void run_listener(IPC::FileDescriptor /*file_descriptor*/) {
+void run_listener(IPC::FileDescriptor /*file_descriptor*/)
+{
     std::println("Listener running...");
 }
 

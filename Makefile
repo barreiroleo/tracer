@@ -32,3 +32,6 @@ coverage:
 
 graph:
 	@ninja -C build -t graph all | dot -Tpng -o build_graph.png
+
+format:
+	@ninja -C build clang-format
