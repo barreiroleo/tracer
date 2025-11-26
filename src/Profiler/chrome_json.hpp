@@ -66,7 +66,7 @@ struct TraceEvent {
     const int pid;
 
     /// @var tid The thread ID for the thread that output this event.
-    const std::string tid;
+    const size_t tid;
 
     /// @var dur to specify the tracing clock duration of complete events in microseconds
     const int64_t dur;
