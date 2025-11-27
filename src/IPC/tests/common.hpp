@@ -1,6 +1,15 @@
 #pragma once
 
-#include <args.hpp>
+#include <Args/args.hpp>
+
+namespace IPC {
+
+struct message {
+    int pid;
+    int counter;
+};
+
+} // namespace IPC
 
 struct Options {
     std::string pipename = "/var/lock/pipename";

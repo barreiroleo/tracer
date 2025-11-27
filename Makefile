@@ -5,7 +5,7 @@ ASAN_OPTIONS="symbolize=1:color=always"
 ASAN_SYMBOLIZER_PATH=$(bash which llvm-symbolizer)
 GTEST_COLOR=1
 
-.PHONY: default gen build test test-valgrind coverage graph
+.PHONY: default gen build test test-valgrind coverage graph format clean
 default:
 	@if [ ! -d build ]; then $(MAKE) gen; fi
 	$(MAKE) build
@@ -35,3 +35,6 @@ graph:
 
 format:
 	@ninja -C build clang-format
+
+clean:
+	meson compile --clean -C build

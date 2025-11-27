@@ -1,3 +1,7 @@
+args_dep = declare_dependency(
+  include_directories: include_directories('..'),
+)
+
 test_pass_cases = [
   {
     'name': 'pipe',
@@ -31,8 +35,7 @@ test_fail_cases = [
 
 arg_test_exe = executable(
   'args_test',
-  'test.cpp',
-  dependencies: [args_dep],
+  'tests/test.cpp',
 )
 
 foreach case : test_pass_cases + test_fail_cases

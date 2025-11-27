@@ -1,5 +1,5 @@
-#include <src/Profiler/profiler.hpp>
-#include <src/Profiler/trace.hpp>
+#include <profiler.hpp>
+#include <trace.hpp>
 
 #include <chrono>
 #include <future>

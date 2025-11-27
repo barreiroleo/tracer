@@ -1,7 +1,6 @@
-#include "shared_msg.hpp"
+#include "common.hpp"
 
-#include <src/IPC/client.hpp>
-#include <src/cli_opts.hpp>
+#include <client.hpp>
 
 #include <thread>
 

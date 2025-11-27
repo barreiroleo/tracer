@@ -1,6 +1,18 @@
-#include <src/IPC/server.hpp>
-#include <src/cli_opts.hpp>
+#include <Args/args.hpp>
+#include <IPC/server.hpp>
 
+struct Options {
+    std::string pipename = "/var/lock/pipename";
+};
+
+inline Args::Result command_handler(std::string_view key, std::string_view value, Options& options)
+{
+    if (key == "--pipe" && !value.empty()) {
+        options.pipename = value;
+        return { Args::Result::Code::OK };
+    }
+    return { Args::Result::Code::UNHANDLED };
+}
 void run_listener(IPC::FileDescriptor /*file_descriptor*/)
 {
     std::println("Listener running...");

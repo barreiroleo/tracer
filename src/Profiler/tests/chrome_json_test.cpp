@@ -1,4 +1,4 @@
-#include <src/Profiler/chrome_json.hpp>
+#include <chrome_json.hpp>
 
 #include <print>
 
