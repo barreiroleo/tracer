@@ -1,0 +1,2 @@
+exclude = tests
+ignore_errors = inconsistent,mismatch,negative,unused
