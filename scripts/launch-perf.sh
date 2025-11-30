@@ -41,7 +41,7 @@ tweak_kernel() {
 }
 
 launch_and_record() {
-    perf record -g -o ${OUTPUT_DIR}/perf.data --call-graph=dwarf ${CWD}/build/${PROCESS}
+    perf record -g -o ${OUTPUT_DIR}/perf.data --call-graph=dwarf ${PROCESS}
 }
 
 listen_and_record() {

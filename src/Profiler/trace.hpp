@@ -41,6 +41,26 @@ public:
         }
     }
 
+private:
+    /// @brief Get a unique timestamp that's guaranteed to be monotonically increasing
+    ///
+    /// This solves the limitation on events with complete events (X) has the same timestamps
+    /// - perf_text_importer_sample_no_frames
+    static inline int64_t get_unique_timestamp()
+    {
+        static thread_local int64_t last_timestamp { 0 };
+
+        auto current = time_point_cast<time_unit>(high_resolution_clock::now())
+                           .time_since_epoch()
+                           .count();
+
+        // Ensure monotonic increase by incrementing if timestamp hasn't advanced
+        std::ignore = (current <= last_timestamp) && (current = last_timestamp + 1);
+
+        last_timestamp = current;
+        return current;
+    }
+
     void write_trace()
     {
         // ToDo: Make it platform independent.
@@ -60,26 +80,6 @@ public:
         };
 
         Profiler::Profiler::instance().push_trace(std::move(m_trace_data));
-    }
-
-private:
-    /// @brief Get a unique timestamp that's guaranteed to be monotonically increasing
-    ///
-    /// This solves the limitation on events with complete events (X) has the same timestamps
-    /// - perf_text_importer_sample_no_frames
-    static inline int64_t get_unique_timestamp()
-    {
-        static thread_local int64_t last_timestamp { 0 };
-
-        auto current = time_point_cast<time_unit>(high_resolution_clock::now())
-                           .time_since_epoch()
-                           .count();
-
-        // Ensure monotonic increase by incrementing if timestamp hasn't advanced
-        std::ignore = (current <= last_timestamp) && (current = last_timestamp + 1);
-
-        last_timestamp = current;
-        return current;
     }
 
     std::string m_name;

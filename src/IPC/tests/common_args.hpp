@@ -1,18 +1,10 @@
 #pragma once
 
 #include <Args/args.hpp>
-
-namespace IPC {
-
-struct message {
-    int pid;
-    int counter;
-};
-
-} // namespace IPC
+#include <string>
 
 struct Options {
-    std::string pipename = "/var/lock/pipename";
+    std::string pipename = "/tmp/tracer.pipe";
 };
 
 inline Args::Result command_handler(std::string_view key, std::string_view value, Options& options)

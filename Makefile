@@ -43,3 +43,8 @@ format:
 
 clean:
 	meson compile --clean -C build
+
+test-server-client-run:
+	@make
+	@tmux split-window -v -l 80% "./build/src/IPC/client --pipe /tmp/tracer.pipe; exec zsh"
+	@tmux split-window -h "./build/src/IPC/server --pipe /tmp/tracer.pipe; exec zsh"
