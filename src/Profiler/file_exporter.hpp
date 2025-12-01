@@ -1,32 +1,32 @@
 #pragma once
 
-#include "chrome_json.hpp"
+#include "chrome_event.hpp"
 
 #include <atomic>
 #include <fstream>
 #include <mutex>
 
 #ifdef ENABLE_TRACING
-#define TRACE_SETUP(file) Profiler::Profiler::instance(file)
+#define TRACE_SETUP(file) Tracer::FileExporter::instance(file)
 #else
 #define TRACE_SETUP(file)
 #endif // ENABLE_TRACING
 
-namespace Profiler {
+namespace Tracer {
 
-class Profiler {
+class FileExporter {
 public:
-    static Profiler& instance(std::string_view output_file = "trace.json")
+    static FileExporter& instance(std::string_view output_file = "trace.json")
     {
-        static Profiler instance { output_file };
+        static FileExporter instance { output_file };
         return instance;
     }
 
-    void push_trace(TraceEvent&& result)
+    void push_trace(ChromeEvent&& result)
     {
         static std::atomic_bool is_first_event { true };
 
-        const auto json = ::Profiler::to_string(result);
+        const auto json = Tracer::to_string(result);
 
         std::lock_guard<std::mutex> lock(m_lock);
         {
@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    Profiler(std::string_view output_file)
+    FileExporter(std::string_view output_file)
         : m_trace_stream(std::ofstream(output_file.data()))
     {
         if (!m_trace_stream.is_open()) {
@@ -47,7 +47,7 @@ private:
         m_trace_stream << TRACE_EVENTS;
     }
 
-    ~Profiler()
+    ~FileExporter()
     {
         m_trace_stream << '\n'
                        << TRACE_EVENT_BODY;
@@ -58,4 +58,4 @@ private:
     std::ofstream m_trace_stream;
 };
 
-} // namespace Profiler
+} // namespace Tracer

@@ -37,7 +37,7 @@ public:
         return m_file_descriptor;
     }
 
-    template<class Message>
+    template <class Message>
     [[nodiscard]] std::optional<Message> read_message() const
     {
         Message msg {};

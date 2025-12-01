@@ -1,10 +1,15 @@
 #pragma once
 
 #include <algorithm>
-#include <format>
 #include <string>
 
-namespace Profiler {
+#ifdef __cpp_lib_format
+#include <format>
+#else
+#include <sstream>
+#endif
+
+namespace Tracer {
 
 // Chrome Trace Event format
 // {
@@ -46,7 +51,7 @@ static constexpr std::string_view TRACE_EVENT_BODY {
 ///
 ///   An optional parameter tdur specifies the thread clock duration of complete events in
 ///   microseconds.
-struct TraceEvent {
+struct ChromeEvent {
 
     /// @var name The name of the event, as displayed in Trace Viewer
     const std::string name;
@@ -85,22 +90,30 @@ struct TraceEvent {
     // const char* cname { };
 };
 
-inline std::string to_string(const TraceEvent& event)
+inline std::string to_string(const ChromeEvent& event)
 {
-    static constexpr std::string_view json_template {
-        R"({{"name":"{}","cat":"{}","ph":"{}","ts":{},"pid":{},"tid":{},"dur":{}}})"
-    };
-
     std::string_view event_name_sanitized = event.name;
-
-    std::string name_buf {};
     if (event.name.contains('"')) {
+        std::string name_buf {};
         std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(name_buf), '"', '\'');
         event_name_sanitized = name_buf;
     }
-
-    return std::format(json_template, event_name_sanitized, event.cat, event.ph, event.ts,
-        event.pid, event.tid, event.dur);
+#ifdef __cpp_lib_format
+    static constexpr std::string_view json_template {
+        R"({{"name":"{}","cat":"{}","ph":"{}","ts":{},"pid":{},"tid":{},"dur":{}}})"
+    };
+    return std::format(json_template, event_name_sanitized, event.cat, event.ph, event.ts, event.pid, event.tid, event.dur);
+#else
+    std::stringstream ss;
+    ss << R"({"name":")" << event_name_sanitized << "\","
+       << R"("cat":")" << event.cat << "\","
+       << R"("ph":")" << event.ph << "\","
+       << R"("ts":)" << event.ts << ","
+       << R"("pid":)" << event.pid << ","
+       << R"("tid":)" << event.tid << ","
+       << R"("dur":)" << event.dur << "}";
+    return ss.str();
+#endif
 }
 
-} // namespace Profiler
+} // namespace Tracer

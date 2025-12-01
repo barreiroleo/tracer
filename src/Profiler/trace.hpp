@@ -1,6 +1,7 @@
 #pragma once
 
-#include "profiler.hpp"
+#include "chrome_event.hpp"
+#include "file_exporter.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -8,8 +9,8 @@
 #include <unistd.h>
 
 #ifdef ENABLE_TRACING
-#define TRACE_SCOPE_CAT(name, cat) TraceEvent trace_##__LINE__(name, cat)
-#define TRACE_SCOPE(name) TraceEvent trace_##__LINE__(name)
+#define TRACE_SCOPE_CAT(name, cat) Trace trace_##__LINE__(name, cat)
+#define TRACE_SCOPE(name) Trace trace_##__LINE__(name)
 #define TRACE_FN_CAT(cat) TRACE_SCOPE_CAT(__FUNCTION__, cat)
 #define TRACE_FN() TRACE_SCOPE(__FUNCTION__)
 #else
@@ -19,20 +20,20 @@
 #define TRACE_FN()
 #endif // ENABLE_TRACING
 
-class TraceEvent {
+class Trace {
 public:
     using time_unit = std::chrono::microseconds;
     using high_resolution_clock = std::chrono::high_resolution_clock;
     using time_point = std::chrono::time_point<high_resolution_clock, time_unit>;
 
-    TraceEvent(std::string&& name, std::string&& cat = "Default")
+    Trace(std::string&& name, std::string&& cat = "Default")
         : m_name(std::move(name))
         , m_cat(std::move(cat))
         , m_start_time(get_unique_timestamp())
     {
     }
 
-    ~TraceEvent()
+    ~Trace()
     {
         try {
             write_trace();
@@ -69,7 +70,7 @@ private:
         static thread_local int tid = static_cast<int>(syscall(SYS_gettid));
         const auto end_time = get_unique_timestamp();
 
-        Profiler::TraceEvent m_trace_data {
+        Tracer::ChromeEvent m_trace_data {
             .name = std::move(m_name),
             .cat = std::move(m_cat),
             .ph = 'X',
@@ -79,7 +80,7 @@ private:
             .dur = (end_time - m_start_time),
         };
 
-        Profiler::Profiler::instance().push_trace(std::move(m_trace_data));
+        Tracer::FileExporter::instance().push_trace(std::move(m_trace_data));
     }
 
     std::string m_name;

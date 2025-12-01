@@ -1,4 +1,4 @@
-#include <chrome_json.hpp>
+#include <chrome_event.hpp>
 
 #include <print>
 
@@ -9,7 +9,7 @@ int main(int /* argc */, char* /* argv */[])
     const __pid_t pid = std::numeric_limits<pid_t>::max();
     const int tid = std::numeric_limits<int>::max();
 
-    Profiler::TraceEvent event {
+    Tracer::ChromeEvent event {
         .name = "Test Event",
         .cat = "default",
         .ph = 'X',
