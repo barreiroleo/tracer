@@ -10,15 +10,6 @@
 namespace IPC {
 using FileDescriptor = int;
 
-/// @brief Concept for types that can be read as IPC messages
-/// @tparam T The type to check
-template <typename T>
-concept IPCMessage = requires(T msg) {
-    { msg.length } -> std::convertible_to<size_t>;
-    { msg.body } -> std::convertible_to<const char*>;
-    requires std::is_array_v<decltype(T::body)>;
-};
-
 class PipeServer {
 public:
     PipeServer(std::string path)
@@ -46,28 +37,24 @@ public:
         return m_file_descriptor;
     }
 
-    /// @brief Read a message from the pipe with proper handling of variable-length messages
-    /// @tparam MessageType The message type (must satisfy IPCMessage concept)
-    /// @param msg Reference to message structure to fill
-    /// @return true if message was read successfully, false otherwise
-    template <IPCMessage MessageType>
-    [[nodiscard]] std::optional<MessageType> read_message()
+    template<class Message>
+    [[nodiscard]] std::optional<Message> read_message() const
     {
-        MessageType msg {};
+        Message msg {};
 
         // First, read the header to determine the message length
-        constexpr size_t header_size = offsetof(MessageType, body);
+        constexpr size_t header_size = offsetof(Message, body);
         if (read(m_file_descriptor, &msg, header_size) < static_cast<ssize_t>(header_size)) {
             std::println(stderr, "PID {}; Error reading msg header. {}.", m_pid, strerror(errno));
             return std::nullopt;
         }
 
-        // Validate and handle oversized messages
+        // Validate and handle oversized messages. Discard excess bytes in chunks.
+        // This is very unlikely to happen, unless the client forces an invalid length.
         if (msg.length > sizeof(msg.body)) {
             std::println(stderr, "PID {}; Invalid msg length: {} (max: {}), skipping {} bytes",
                 m_pid, msg.length, sizeof(msg.body), msg.length - sizeof(msg.body));
 
-            // Discard excess bytes in chunks
             for (size_t remaining = msg.length - sizeof(msg.body); remaining > 0;) {
                 const size_t chunk = std::min(remaining, sizeof(msg.body));
                 read(m_file_descriptor, msg.body, chunk);

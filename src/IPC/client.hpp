@@ -12,16 +12,6 @@
 namespace IPC {
 using FileDescriptor = int;
 
-/// @brief Concept for types that can be written as IPC messages
-/// @tparam T The type to check
-template <typename T>
-concept IPCMessage = requires(T msg) {
-    { msg.length } -> std::convertible_to<size_t>;
-    { msg.body } -> std::convertible_to<const char*>;
-    requires std::is_array_v<decltype(T::body)>;
-    { msg.size() } -> std::convertible_to<size_t>;
-};
-
 class PipeClient {
 public:
     PipeClient(std::string path)
@@ -43,12 +33,8 @@ public:
         return m_file_descriptor;
     }
 
-    /// @brief Write a message to the pipe
-    /// @tparam MessageType The message type (must satisfy IPCMessage concept)
-    /// @param msg Reference to message to send
-    /// @return true if message was written successfully, false otherwise
-    template <IPCMessage MessageType>
-    [[nodiscard]] bool write_message(const MessageType& msg)
+    template <class Message>
+    [[nodiscard]] bool write_message(const Message& msg) const
     {
         const auto bytes_written = write(m_file_descriptor, &msg, msg.size());
         if (bytes_written < 0) {

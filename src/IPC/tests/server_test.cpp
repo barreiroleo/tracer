@@ -1,25 +1,28 @@
 #include "common_args.hpp"
-#include "common_message.hpp"
 
+#include "message.hpp"
 #include <server.hpp>
 
 #include <thread>
 
-void listen_next(IPC::PipeServer& server)
-{
-    const std::optional<IPC::message> msg = server.read_message<IPC::message>();
-    if (!msg.has_value()) {
-        std::println("PID {}; Message reception failed", getpid());
-    }
-    std::println("PID {}; Received msg: {}", getpid(), IPC::to_string(msg.value()));
-}
-
 void run_listener(IPC::PipeServer& server)
 {
     std::println("Listener started");
-    for (int i = 0; i < 5; i++) {
-        listen_next(server);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    bool running = true;
+
+    while (running) {
+        const std::optional<IPC::Message> msg = server.read_message<IPC::Message>();
+        if (!msg.has_value()) {
+            std::println("PID {}; Message reception failed", getpid());
+        }
+        std::println("PID {}; Received msg: {}", getpid(), IPC::to_string(msg.value()));
+
+        if (msg->kind == IPC::MessageKind::STOP) {
+            running = false;
+            std::println("Listener stopping as per STOP message");
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 
