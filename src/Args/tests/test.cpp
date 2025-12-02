@@ -3,8 +3,8 @@
 #include <print>
 #include <string_view>
 
-struct Options {
-    std::string pipename { "/var/lock/pipename" };
+struct ArgsOpts {
+    std::string pipe_path { "/var/lock/pipename" };
 };
 
 static std::string_view help_msg = R"(
@@ -14,7 +14,7 @@ Options:
     --help              Show this help message
 )";
 
-inline auto command_handler(std::string_view key, std::string_view value, Options& parser_out) -> Args::Result
+inline auto command_handler(std::string_view key, std::string_view value, ArgsOpts& parser_out) -> Args::Result
 {
     using Code = Args::Result::Code;
 
@@ -22,7 +22,7 @@ inline auto command_handler(std::string_view key, std::string_view value, Option
         if (value.empty()) {
             return { Code::ERROR, "Error: --pipe requires a pipename argument." };
         }
-        parser_out.pipename = value;
+        parser_out.pipe_path = value;
         return { Code::OK };
     }
     if (key == "--help") {
@@ -34,9 +34,9 @@ inline auto command_handler(std::string_view key, std::string_view value, Option
 
 int main(int argc, char* argv[])
 {
-    const auto options = Args::parse<Options>(argc, argv, command_handler);
+    const auto options = Args::parse<ArgsOpts>(argc, argv, command_handler);
 
-    std::println("Using named pipe: {}", options.pipename);
+    std::println("Using named pipe: {}", options.pipe_path);
 
     return 0;
 }

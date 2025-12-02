@@ -1,4 +1,5 @@
-#include <chrome_event.hpp>
+#include <Profiler/chrome_event.hpp>
+#include <Profiler/serialization.hpp>
 
 #include <print>
 
@@ -18,7 +19,7 @@ int main(int /* argc */, char* /* argv */[])
         .tid = tid,
         .dur = 1000,
     };
-    std::string event_json = to_string(event);
+    std::string event_json = Tracer::serialize_to_json(event);
 
     static constexpr std::string_view expected_json {
         R"({"name":"Test Event","cat":"default","ph":"X","ts":9223372036854775807,"pid":2147483647,"tid":2147483647,"dur":1000})"

@@ -74,10 +74,10 @@ void run_writer(IPC::PipeClient& client)
 
 int main(int argc, char* argv[])
 {
-    const Options options = Args::parse<Options>(argc, argv, command_handler);
-    const auto pipename = std::move(options.pipename);
+    const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
+    const auto pipe_path = std::move(options.pipe_path);
 
-    IPC::PipeClient client { pipename };
+    IPC::PipeClient client { pipe_path };
     if (!client.init().has_value()) {
         std::exit(EXIT_FAILURE);
     }

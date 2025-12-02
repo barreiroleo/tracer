@@ -28,10 +28,10 @@ void run_listener(IPC::PipeServer& server)
 
 int main(int argc, char** argv)
 {
-    const Options options = Args::parse<Options>(argc, argv, command_handler);
-    const auto pipename = std::move(options.pipename);
+    const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
+    const auto pipe_path = std::move(options.pipe_path);
 
-    IPC::PipeServer server { pipename };
+    IPC::PipeServer server { pipe_path };
     if (!server.init().has_value()) {
         std::exit(EXIT_FAILURE);
     }
