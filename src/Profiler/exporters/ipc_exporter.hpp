@@ -15,9 +15,9 @@ namespace Tracer {
 
 class IPCExporter : public Exporter {
 public:
-    static IPCExporter& instance(std::string_view pipename = "/tmp/trace.pipe")
+    static IPCExporter& instance(std::string_view pipe_path = "/tmp/trace.pipe")
     {
-        static IPCExporter instance { pipename };
+        static IPCExporter instance { pipe_path };
         return instance;
     }
 
@@ -28,10 +28,8 @@ public:
 
         IPC::Message msg {
             .kind = IPC::MessageKind::DATA,
-            .length = ss.view().length(),
-            .body = {}
+            .body = ss.str()
         };
-        std::copy_n(ss.view().data(), ss.view().length(), msg.body);
 
         if (!m_pipe.write_message(msg)) {
             std::cerr << "Failed to send message..\n";
@@ -41,8 +39,8 @@ public:
     }
 
 private:
-    IPCExporter(std::string_view pipename)
-        : m_pipe(pipename.data())
+    IPCExporter(std::string_view pipe_path)
+        : m_pipe(pipe_path.data())
     {
         if (!m_pipe.init().has_value()) {
             std::exit(EXIT_FAILURE);
@@ -53,7 +51,6 @@ private:
     {
         const IPC::Message msg {
             .kind = IPC::MessageKind::STOP,
-            .length = 0,
             .body = {}
         };
         std::ignore = m_pipe.write_message(msg);

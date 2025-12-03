@@ -11,7 +11,7 @@ void run_listener(IPC::PipeServer& server)
     bool running = true;
 
     while (running) {
-        const std::optional<IPC::Message> msg = server.read_message<IPC::Message>();
+        const std::optional<IPC::Message> msg = server.read_message();
         if (!msg.has_value()) {
             std::println("PID {}; Message reception failed", getpid());
         }

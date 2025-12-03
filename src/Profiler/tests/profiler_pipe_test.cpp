@@ -184,9 +184,11 @@ void test_combined_scenario()
     }
 }
 
-int main(int /* argc */, char* /* argv */[])
+int main(int argc, char* argv[])
 {
-    IPC_TRACE_SETUP("/tmp/trace.pipe");
+    const char* pipe_path = (argc < 2) ? "/tmp/tracer-trace_pipe_test.pipe"
+                                       : argv[2];
+    IPC_TRACE_SETUP(pipe_path);
 
     std::println("Starting comprehensive profiler test...\n");
     IPC_TRACE_FN();
@@ -198,18 +200,18 @@ int main(int /* argc */, char* /* argv */[])
     std::println("2. Testing nested function calls...");
     outer_function();
 
-    // std::println("3. Testing recursive calls...");
-    // recursive_fibonacci(8);
-    //
-    // std::println("4. Testing functions with multiple scopes...");
-    // function_with_scopes();
-    //
-    // std::println("5. Testing async operations...");
-    // test_async_operations();
-    //
-    // std::println("6. Testing multithreading...");
-    // test_multithreading();
-    //
+    std::println("3. Testing recursive calls...");
+    recursive_fibonacci(8);
+
+    std::println("4. Testing functions with multiple scopes...");
+    function_with_scopes();
+
+    std::println("5. Testing async operations...");
+    test_async_operations();
+
+    std::println("6. Testing multithreading...");
+    test_multithreading();
+
     // std::println("7. Testing combined scenario (threads + recursion + nesting)...");
     // test_combined_scenario();
 

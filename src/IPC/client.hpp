@@ -1,5 +1,9 @@
 #pragma once
 
+#include "message.hpp"
+#include <filesystem>
+#include <fstream>
+#include <mutex>
 #include <optional>
 #include <print>
 #include <string>
@@ -16,28 +20,32 @@ class PipeClient {
 public:
     PipeClient(std::string path)
         : m_pid(getpid())
-        , m_pipename(std::move(path))
+        , m_pipe_path(std::move(path))
     {
     }
 
     [[nodiscard]]
-    std::optional<FileDescriptor> init()
+    std::optional<std::reference_wrapper<std::ofstream>> init()
     {
-        // Try to open pipe for writing only
-        m_file_descriptor = open(m_pipename.data(), O_WRONLY);
-        while (m_file_descriptor < 0 && errno == ENOENT) {
-            std::println("Process {}: Pipe not found. Retrying...", m_pid);
-            m_file_descriptor = open(m_pipename.data(), O_WRONLY);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::once_flag retried;
+        while (!std::filesystem::exists(m_pipe_path)) {
+            std::call_once(retried, [&] {
+                std::println(stderr, "Waiting for pipe to be created at {}...", m_pipe_path);
+            });
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
-        return m_file_descriptor;
+        m_pipe_stream.open(m_pipe_path.data(), std::ios::binary | std::ios::out);
+        if (!m_pipe_stream.is_open() || m_pipe_stream.fail()) {
+            std::println(stderr, "Failed to open pipe.");
+            return std::nullopt;
+        }
+        return m_pipe_stream;
     }
 
-    template <class Message>
-    [[nodiscard]] bool write_message(const Message& msg) const
+    [[nodiscard]] bool write_message(const Message& msg)
     {
-        const auto bytes_written = write(m_file_descriptor, &msg, msg.size());
-        if (bytes_written < 0) {
+        m_pipe_stream << msg;
+        if (m_pipe_stream.fail()) {
             std::println(stderr, "Process {}: Error while writing message. {}", m_pid, strerror(errno));
             return false;
         }
@@ -46,18 +54,16 @@ public:
 
     ~PipeClient()
     {
-        if (close(m_file_descriptor) != 0) {
-            std::println("Process {}: Error while closing pipe. {}", m_pid, strerror(errno));
-        }
-        if (unlink(m_pipename.data()) != 0) {
-            std::println("Process {}: Error while unlinking pipe. {}", m_pid, strerror(errno));
+        m_pipe_stream.close();
+        if (m_pipe_stream.fail()) {
+            std::println(stderr, "Process {}: Error while closing pipe. {}", m_pid, strerror(errno));
         }
     }
 
 private:
     pid_t m_pid {};
-    std::string m_pipename;
-    FileDescriptor m_file_descriptor { -1 };
+    std::string m_pipe_path;
+    std::ofstream m_pipe_stream;
 };
 
 }

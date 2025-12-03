@@ -13,8 +13,10 @@ void run_listener(IPC::PipeServer& server, Tracer::FileExporter& exporter)
     std::println("Trace collector started");
     bool running = true;
 
+    std::vector<Tracer::ChromeEvent> events(1000);
     while (running) {
-        const std::optional<IPC::Message> msg = server.read_message<IPC::Message>();
+        const std::optional<IPC::Message> msg = server.read_message();
+
         if (!msg.has_value()) {
             std::println("PID {}; Message reception failed", getpid());
             continue;
@@ -27,11 +29,11 @@ void run_listener(IPC::PipeServer& server, Tracer::FileExporter& exporter)
         }
 
         // Deserialize the event from the message body
-        std::stringstream ss(std::string(msg->body, msg->length));
-        Tracer::ChromeEvent event;
+        std::stringstream ss(msg->body);
+        Tracer::ChromeEvent event = events.emplace_back();
         ss >> event;
-
-        // Export to file
+    }
+    for (Tracer::ChromeEvent& event : events) {
         exporter.push_trace(std::move(event));
     }
 }
@@ -57,8 +59,8 @@ inline Args::Result command_handler(std::string_view key, std::string_view value
 int main(int argc, char** argv)
 {
     const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
-    const auto pipe_path = std::move(options.pipe_path);
-    const auto output_file = std::move(options.output_file);
+    std::string_view pipe_path = options.pipe_path;
+    std::string_view output_file = options.output_file;
 
     std::println("Starting trace collector:");
     std::println("  Pipe: {}", pipe_path);

@@ -14,6 +14,6 @@ client_exe = executable(
   dependencies: args_dep,
 )
 
-pipe_args = ['--pipe', '/tmp/tracer.pipe']
+pipe_args = ['--pipe', '/tmp/tracer-IPC_test.pipe']
 test('client_test', client_exe, args: pipe_args, timeout: 5)
 test('server_test', server_exe, args: pipe_args, timeout: 5)
