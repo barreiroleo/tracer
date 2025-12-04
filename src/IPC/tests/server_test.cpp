@@ -3,6 +3,7 @@
 #include "message.hpp"
 #include <server.hpp>
 
+#include <print>
 #include <thread>
 
 void run_listener(IPC::PipeServer& server)

@@ -5,6 +5,7 @@
 #include <chrome_event.hpp>
 #include <exporters/file_exporter.hpp>
 
+#include <print>
 #include <sstream>
 #include <thread>
 

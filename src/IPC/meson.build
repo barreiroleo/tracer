@@ -1,17 +1,30 @@
+ipc_client_lib = static_library(
+  'ipc_client',
+  'client.cpp',
+  override_options: ['cpp_std=c++23'],
+)
+
+ipc_server_lib = static_library(
+  'ipc_server',
+  'server.cpp',
+  override_options: ['cpp_std=c++23'],
+)
+
 ipc_dep = declare_dependency(
   version: '0.0.1',
   include_directories: include_directories('..'),
+  link_with: [ipc_client_lib, ipc_server_lib],
 )
 
 server_exe = executable(
   'server',
   'tests/server_test.cpp',
-  dependencies: args_dep,
+  dependencies: [args_dep, ipc_dep],
 )
 client_exe = executable(
   'client',
   'tests/client_test.cpp',
-  dependencies: args_dep,
+  dependencies: [args_dep, ipc_dep],
 )
 
 pipe_args = ['--pipe', '/tmp/tracer-IPC_test.pipe']

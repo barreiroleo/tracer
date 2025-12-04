@@ -1,6 +1,7 @@
 #include "common_args.hpp"
 
 #include <client.hpp>
+#include <print>
 
 #include <thread>
 
