@@ -18,9 +18,9 @@ using FileDescriptor = int;
 
 class PipeClient {
 public:
-    PipeClient(std::string path)
+    PipeClient(std::string_view path)
         : m_pid(getpid())
-        , m_pipe_path(std::move(path))
+        , m_pipe_path(path)
     {
     }
 
@@ -46,7 +46,7 @@ public:
     {
         m_pipe_stream << msg;
         if (m_pipe_stream.fail()) {
-            std::println(stderr, "Process {}: Error while writing message. {}", m_pid, strerror(errno));
+            std::println(stderr, "PID {}: Error while writing message. {}", m_pid, strerror(errno));
             return false;
         }
         return true;
@@ -56,7 +56,7 @@ public:
     {
         m_pipe_stream.close();
         if (m_pipe_stream.fail()) {
-            std::println(stderr, "Process {}: Error while closing pipe. {}", m_pid, strerror(errno));
+            std::println(stderr, "PID {}: Error while closing pipe. {}", m_pid, strerror(errno));
         }
     }
 

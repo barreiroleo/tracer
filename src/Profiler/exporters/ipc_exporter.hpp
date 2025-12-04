@@ -4,7 +4,6 @@
 #include <IPC/message.hpp>
 
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/exporters/exporter.hpp>
 #include <Profiler/serialization.hpp>
 
 #include <iostream>
@@ -13,7 +12,7 @@
 
 namespace Tracer {
 
-class IPCExporter : public Exporter {
+class IPCExporter {
 public:
     static IPCExporter& instance(std::string_view pipe_path = "/tmp/trace.pipe")
     {
@@ -21,9 +20,9 @@ public:
         return instance;
     }
 
-    void push_trace(ChromeEvent&& result) override
+    void push_trace(const ChromeEvent& result)
     {
-        static std::stringstream ss;
+        std::stringstream ss;
         ss << result;
 
         IPC::Message msg {
@@ -35,12 +34,11 @@ public:
             std::cerr << "Failed to send message..\n";
             return;
         }
-        ss.clear();
     }
 
 private:
     IPCExporter(std::string_view pipe_path)
-        : m_pipe(pipe_path.data())
+        : m_pipe(pipe_path)
     {
         if (!m_pipe.init().has_value()) {
             std::exit(EXIT_FAILURE);

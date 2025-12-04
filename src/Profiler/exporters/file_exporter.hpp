@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/exporters/exporter.hpp>
 #include <Profiler/serialization.hpp>
 
 #include <atomic>
@@ -16,7 +15,7 @@
 
 namespace Tracer {
 
-class FileExporter : public Exporter {
+class FileExporter {
 public:
     static FileExporter& instance(std::string_view output_file = "trace.json")
     {
@@ -24,7 +23,7 @@ public:
         return instance;
     }
 
-    void push_trace(ChromeEvent&& result) override
+    void push_trace(const ChromeEvent& result)
     {
         static std::atomic_bool is_first_event { true };
 

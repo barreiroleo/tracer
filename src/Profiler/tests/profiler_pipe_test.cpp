@@ -212,8 +212,8 @@ int main(int argc, char* argv[])
     std::println("6. Testing multithreading...");
     test_multithreading();
 
-    // std::println("7. Testing combined scenario (threads + recursion + nesting)...");
-    // test_combined_scenario();
+    std::println("7. Testing combined scenario (threads + recursion + nesting)...");
+    test_combined_scenario();
 
     std::println("\nProfiler test complete.");
     return 0;

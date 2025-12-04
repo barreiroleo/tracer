@@ -18,10 +18,10 @@ void send_message(IPC::PipeClient& client, std::string_view content)
         .body = content.data(),
     };
     if (!client.write_message(msg)) {
-        std::println(stderr, "Process {}: Failed to send message.", msg.pid);
+        std::println(stderr, "PID {}: Failed to send message.", msg.pid);
         return;
     }
-    std::println("Process {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
+    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
 }
 
 void send_stop_message(IPC::PipeClient& client)
@@ -31,10 +31,10 @@ void send_stop_message(IPC::PipeClient& client)
         .pid = getpid(),
     };
     if (!client.write_message(msg)) {
-        std::println(stderr, "Process {}: Failed to send message.", msg.pid);
+        std::println(stderr, "PID {}: Failed to send message.", msg.pid);
         return;
     }
-    std::println("Process {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
+    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
 }
 
 void run_writer(IPC::PipeClient& client)
@@ -50,7 +50,7 @@ void run_writer(IPC::PipeClient& client)
 int main(int argc, char* argv[])
 {
     const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
-    const auto pipe_path = std::move(options.pipe_path);
+    std::string_view pipe_path = options.pipe_path;
 
     IPC::PipeClient client { pipe_path };
     if (!client.init().has_value()) {

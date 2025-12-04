@@ -8,34 +8,24 @@
 
 #include <sstream>
 
-void run_listener(IPC::PipeServer& server, Tracer::FileExporter& exporter)
+void run(IPC::PipeServer& server, std::string_view output_file)
 {
-    std::println("Trace collector started");
-    bool running = true;
+    // File Exporter
+    Tracer::FileExporter& exporter = Tracer::FileExporter::instance(output_file);
 
-    std::vector<Tracer::ChromeEvent> events(1000);
-    while (running) {
-        const std::optional<IPC::Message> msg = server.read_message();
-
-        if (!msg.has_value()) {
-            std::println("PID {}; Message reception failed", getpid());
-            continue;
-        }
-
-        if (msg->kind == IPC::MessageKind::STOP) {
-            running = false;
-            std::println("Trace collector stopping as per STOP message");
-            continue;
-        }
-
-        // Deserialize the event from the message body
-        std::stringstream ss(msg->body);
-        Tracer::ChromeEvent event = events.emplace_back();
+    const auto message_handler = [&exporter](const IPC::Message& msg) {
+        // std::println("Received message:\n{}", IPC::to_string(msg));
+        Tracer::ChromeEvent event {};
+        std::stringstream ss(msg.body);
         ss >> event;
-    }
-    for (Tracer::ChromeEvent& event : events) {
-        exporter.push_trace(std::move(event));
-    }
+        exporter.push_trace(event);
+    };
+
+    const auto stop_handler = []() {
+        std::println("Trace collector shutdown complete");
+    };
+
+    server.run(message_handler, stop_handler);
 }
 
 struct ArgsOpts {
@@ -73,12 +63,7 @@ int main(int argc, char** argv)
         std::exit(EXIT_FAILURE);
     }
 
-    // Initialize file exporter
-    auto& exporter = Tracer::FileExporter::instance(output_file);
+    run(server, output_file);
 
-    // Run the listener
-    run_listener(server, exporter);
-
-    std::println("Trace collector shutdown complete");
     return 0;
 }

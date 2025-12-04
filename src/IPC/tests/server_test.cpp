@@ -29,7 +29,7 @@ void run_listener(IPC::PipeServer& server)
 int main(int argc, char** argv)
 {
     const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
-    const auto pipe_path = std::move(options.pipe_path);
+    std::string_view pipe_path = options.pipe_path;
 
     IPC::PipeServer server { pipe_path };
     if (!server.init().has_value()) {

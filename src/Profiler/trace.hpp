@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/exporters/exporter.hpp>
 #include <Profiler/exporters/file_exporter.hpp>
 #include <Profiler/exporters/ipc_exporter.hpp>
 
@@ -12,16 +11,16 @@
 
 namespace Tracer {
 
-template <typename ExporterType = FileExporter>
+template <class ExporterType = FileExporter>
 class TraceScope {
 public:
     using time_unit = std::chrono::microseconds;
     using high_resolution_clock = std::chrono::high_resolution_clock;
     using time_point = std::chrono::time_point<high_resolution_clock, time_unit>;
 
-    TraceScope(std::string&& name, std::string&& cat = "Default")
-        : m_name(std::move(name))
-        , m_cat(std::move(cat))
+    TraceScope(std::string_view name, std::string_view cat = "Default")
+        : m_name(name)
+        , m_cat(cat)
         , m_start_time(get_unique_timestamp())
     {
     }
@@ -73,7 +72,7 @@ private:
             .dur = (end_time - m_start_time),
         };
 
-        ExporterType::instance().push_trace(std::move(m_trace_data));
+        ExporterType::instance().push_trace(m_trace_data);
     }
 
     std::string m_name;

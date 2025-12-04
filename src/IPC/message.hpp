@@ -39,7 +39,7 @@ struct Message {
     }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const Message& msg)
+inline std::ostream& serialize(std::ostream& os, const Message& msg)
 {
     size_t length = msg.body.length();
     os.write(reinterpret_cast<const char*>(&msg.kind), sizeof(msg.kind));
@@ -49,7 +49,7 @@ inline std::ostream& operator<<(std::ostream& os, const Message& msg)
     return os;
 }
 
-inline std::istream& operator>>(std::istream& in, Message& msg)
+inline std::istream& deserialize(std::istream& in, Message& msg)
 {
     size_t length {};
     in.read(reinterpret_cast<char*>(&msg.kind), sizeof(msg.kind));
@@ -60,6 +60,16 @@ inline std::istream& operator>>(std::istream& in, Message& msg)
     return in;
 }
 
+inline std::ostream& operator<<(std::ostream& os, const Message& msg)
+{
+    return serialize(os, msg);
+}
+
+inline std::istream& operator>>(std::istream& in, Message& msg)
+{
+    return deserialize(in, msg);
+}
+
 inline std::string to_string(const Message& msg)
 {
     std::stringstream ss;
@@ -68,7 +78,8 @@ inline std::string to_string(const Message& msg)
        << "  kind:" << static_cast<uint8_t>(msg.kind) << ",\n"
        << "  pid:" << msg.pid << ",\n"
        << "  length:" << msg.body.length() << ",\n"
-       << "  body:" << msg.body << "\n"
+       << "  body: \n"
+       << msg.body << "\n"
        << "}\n";
     return ss.str();
 }
