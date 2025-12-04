@@ -24,10 +24,9 @@ public:
         std::stringstream ss;
         ss << result;
 
-        IPC::Message msg {
-            .kind = IPC::MessageKind::DATA,
-            .body = ss.str()
-        };
+        IPC::Message msg {};
+        msg.kind = IPC::MessageKind::DATA;
+        msg.body = ss.str();
 
         std::lock_guard<std::mutex> lock(m_lock);
         if (!m_pipe.write_message(msg)) {
@@ -47,12 +46,11 @@ private:
 
     ~IPCExporter()
     {
-        const IPC::Message msg {
-            .kind = IPC::MessageKind::STOP,
-            .body = {}
-        };
+        IPC::Message msg;
+        msg.kind = IPC::MessageKind::STOP;
+        msg.body = {};
         std::ignore = m_pipe.write_message(msg);
-    };
+    }
 
 private:
     std::mutex m_lock;

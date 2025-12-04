@@ -54,17 +54,16 @@ void TraceScope<T>::write_trace()
     static thread_local int tid = static_cast<int>(syscall(SYS_gettid));
     const auto end_time = get_unique_timestamp();
 
-    ChromeEvent m_trace_data {
-        .name = std::move(m_name),
-        .cat = std::move(m_cat),
-        .ph = 'X',
-        .ts = m_start_time,
-        .pid = getpid(),
-        .tid = static_cast<size_t>(tid),
-        .dur = (end_time - m_start_time),
-    };
+    ChromeEvent trace_data {};
+    trace_data.name = std::move(m_name);
+    trace_data.cat = std::move(m_cat);
+    trace_data.ph = 'X';
+    trace_data.ts = m_start_time;
+    trace_data.pid = getpid();
+    trace_data.tid = static_cast<size_t>(tid);
+    trace_data.dur = (end_time - m_start_time);
 
-    T::instance().push_trace(m_trace_data);
+    T::instance().push_trace(trace_data);
 }
 
 } // namespace Tracer

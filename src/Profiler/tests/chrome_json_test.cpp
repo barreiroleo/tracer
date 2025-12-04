@@ -10,15 +10,15 @@ int main(int /* argc */, char* /* argv */[])
     const __pid_t pid = std::numeric_limits<pid_t>::max();
     const int tid = std::numeric_limits<int>::max();
 
-    Tracer::ChromeEvent event {
-        .name = "Test Event",
-        .cat = "default",
-        .ph = 'X',
-        .ts = ts,
-        .pid = pid,
-        .tid = tid,
-        .dur = 1000,
-    };
+    Tracer::ChromeEvent event {};
+    event.name = "Test Event";
+    event.cat = "default";
+    event.ph = 'X';
+    event.ts = ts;
+    event.pid = pid;
+    event.tid = tid;
+    event.dur = 1000;
+
     std::string event_json = Tracer::serialize_to_json(event);
 
     static constexpr std::string_view expected_json {

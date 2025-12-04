@@ -23,7 +23,7 @@ struct Message {
     int pid {};
     std::string body {};
 
-    constexpr size_t size() const
+    size_t size() const
     {
         return sizeof(kind) + sizeof(pid) + body.length();
     }
