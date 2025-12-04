@@ -1,6 +1,13 @@
+args_lib = static_library(
+  'args',
+  'args.cpp',
+  override_options: ['cpp_std=c++23'],
+)
+
 args_dep = declare_dependency(
   version: '0.0.1',
   include_directories: include_directories('..'),
+  link_with: args_lib,
 )
 
 test_pass_cases = [
@@ -37,6 +44,8 @@ test_fail_cases = [
 arg_test_exe = executable(
   'args_test',
   'tests/test.cpp',
+  dependencies: [args_dep],
+  override_options: ['cpp_std=c++23'],
 )
 
 foreach case : test_pass_cases + test_fail_cases

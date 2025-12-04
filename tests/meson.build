@@ -5,7 +5,8 @@ pipe_args = [
 profiler_pipe_exe = executable(
   'profiler_pipe_cpp17',
   './profiler_pipe_cpp17_test.cpp',
-  cpp_args: ['-DENABLE_TRACING', '-std=c++17'],
+  cpp_args: ['-DENABLE_TRACING'],
+  override_options: ['cpp_std=c++17'],
   dependencies: [profiler_dep],
 )
 
