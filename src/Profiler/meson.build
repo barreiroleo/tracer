@@ -2,6 +2,7 @@ profiler_lib = static_library(
   'profiler',
   'trace.cpp',
   dependencies: [args_dep, ipc_dep],
+  override_options: ['cpp_std=c++17']
 )
 
 profiler_dep = declare_dependency(

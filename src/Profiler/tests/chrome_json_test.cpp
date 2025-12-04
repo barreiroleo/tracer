@@ -1,6 +1,7 @@
 #include <Profiler/chrome_event.hpp>
 
-#include <print>
+#include <iostream>
+#include <limits>
 
 int main(int /* argc */, char* /* argv */[])
 {
@@ -25,8 +26,8 @@ int main(int /* argc */, char* /* argv */[])
     };
 
     if (event_json.compare(expected_json) != 0) {
-        std::println(stderr, "TraceEvent: {}", event_json);
-        std::println(stderr, "Expected: {}", expected_json);
+        std::cerr << "TraceEvent: " << event_json << '\n';
+        std::cerr << "Expected: " << expected_json << '\n';
         throw std::logic_error("Validation failed: JSON output does not match expected output");
     }
     return 0;

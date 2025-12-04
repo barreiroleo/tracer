@@ -1,6 +1,9 @@
 #include "trace.hpp"
 
 #include <chrono>
+#include <iostream>
+#include <syscall.h>
+#include <unistd.h>
 
 // Explicit template instantiation
 template class Tracer::TraceScope<Tracer::FileExporter>;

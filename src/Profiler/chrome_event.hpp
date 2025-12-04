@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -95,7 +96,7 @@ inline std::string serialize_to_json(const ChromeEvent& event)
 {
     std::string name_sanitizer_buf {};
     std::string_view event_name = event.name;
-    if (event.name.contains('"')) {
+    if (event.name.find('"') != std::string::npos) {
         std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(name_sanitizer_buf), '"', '\'');
         event_name = name_sanitizer_buf;
     }
