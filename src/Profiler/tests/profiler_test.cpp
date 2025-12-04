@@ -1,11 +1,8 @@
-#include <Profiler/exporters/file_exporter.hpp>
-#include <Profiler/trace.hpp>
+#include <Profiler/macros.hpp>
 
 #include <chrono>
 #include <future>
 #include <print>
-#include <thread>
-#include <vector>
 
 // Simple function with TRACE_FN
 void simple_function()

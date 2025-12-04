@@ -22,7 +22,7 @@ void send_message(IPC::PipeClient& client, std::string_view content)
         std::println(stderr, "PID {}: Failed to send message.", msg.pid);
         return;
     }
-    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
+    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), msg.to_json());
 }
 
 void send_stop_message(IPC::PipeClient& client)
@@ -35,7 +35,7 @@ void send_stop_message(IPC::PipeClient& client)
         std::println(stderr, "PID {}: Failed to send message.", msg.pid);
         return;
     }
-    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), IPC::to_string(msg));
+    std::println("PID {}: Sent {} bytes: Content {}", msg.pid, msg.size(), msg.to_json());
 }
 
 void run_writer(IPC::PipeClient& client)

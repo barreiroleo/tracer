@@ -1,9 +1,8 @@
-#include <Profiler/trace.hpp>
+#include <Profiler/macros.hpp>
 
 #include <chrono>
 #include <future>
 #include <print>
-#include <thread>
 
 // Simple function with IPC_TRACE_FN
 void simple_function()

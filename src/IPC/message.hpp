@@ -13,11 +13,6 @@
 
 namespace IPC {
 
-struct Message;
-std::ostream& operator<<(std::ostream& os, const Message& msg);
-std::istream& operator>>(std::istream& in, Message& msg);
-std::string to_string(const Message& msg);
-
 enum class MessageKind : uint8_t {
     DATA,
     STOP,
@@ -28,14 +23,28 @@ struct Message {
     int pid {};
     std::string body {};
 
-    void inspect() const
-    {
-        std::cout << to_string(*this);
-    }
-
     constexpr size_t size() const
     {
         return sizeof(kind) + sizeof(pid) + body.length();
+    }
+
+    void inspect() const
+    {
+        std::cout << "Size: " << size() << '\n'
+                  << to_json() << '\n';
+    }
+
+    std::string to_json() const
+    {
+        std::stringstream ss;
+        ss << "{\n"
+           << "  kind:" << static_cast<uint8_t>(kind) << ",\n"
+           << "  pid:" << pid << ",\n"
+           << "  length:" << body.length() << ",\n"
+           << "  body: \n"
+           << body << "\n"
+           << "}";
+        return ss.str();
     }
 };
 
@@ -60,28 +69,8 @@ inline std::istream& deserialize(std::istream& in, Message& msg)
     return in;
 }
 
-inline std::ostream& operator<<(std::ostream& os, const Message& msg)
-{
-    return serialize(os, msg);
-}
+inline std::ostream& operator<<(std::ostream& os, const Message& msg) { return serialize(os, msg); }
 
-inline std::istream& operator>>(std::istream& in, Message& msg)
-{
-    return deserialize(in, msg);
-}
-
-inline std::string to_string(const Message& msg)
-{
-    std::stringstream ss;
-    ss << "Size:" << msg.size() << "\n"
-       << "{\n"
-       << "  kind:" << static_cast<uint8_t>(msg.kind) << ",\n"
-       << "  pid:" << msg.pid << ",\n"
-       << "  length:" << msg.body.length() << ",\n"
-       << "  body: \n"
-       << msg.body << "\n"
-       << "}\n";
-    return ss.str();
-}
+inline std::istream& operator>>(std::istream& in, Message& msg) { return deserialize(in, msg); }
 
 } // namespace IPC

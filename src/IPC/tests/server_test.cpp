@@ -16,7 +16,7 @@ void run_listener(IPC::PipeServer& server)
         if (!msg.has_value()) {
             std::println("PID {}; Message reception failed", getpid());
         }
-        std::println("PID {}; Received msg: {}", getpid(), IPC::to_string(msg.value()));
+        std::println("PID {}; Received msg: {}", getpid(), msg.value().to_json());
 
         if (msg->kind == IPC::MessageKind::STOP) {
             running = false;
