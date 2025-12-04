@@ -13,16 +13,23 @@ void run(IPC::PipeServer& server, std::string_view output_file)
     // File Exporter
     Tracer::FileExporter& exporter = Tracer::FileExporter::instance(output_file);
 
-    const auto message_handler = [&exporter](const IPC::Message& msg) {
+    // TODO(lbarreiro): Buffer events and flush periodically to avoid high memory usage
+    std::vector<std::string> raw_events {};
+    raw_events.reserve(1024);
+
+    const auto message_handler = [&raw_events](const IPC::Message& msg) {
         // std::println("Received message:\n{}", IPC::to_string(msg));
-        Tracer::ChromeEvent event {};
-        std::stringstream ss(msg.body);
-        ss >> event;
-        exporter.push_trace(event);
+        raw_events.emplace_back(msg.body);
     };
 
-    const auto stop_handler = []() {
+    const auto stop_handler = [&exporter, &raw_events]() {
         std::println("Trace collector shutdown complete");
+        for (const auto& raw_event : raw_events) {
+            Tracer::ChromeEvent event {};
+            std::stringstream ss(raw_event);
+            ss >> event;
+            exporter.push_trace(event);
+        }
     };
 
     server.run(message_handler, stop_handler);
