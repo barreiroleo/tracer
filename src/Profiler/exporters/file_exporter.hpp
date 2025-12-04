@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/serialization.hpp>
 
 #include <atomic>
 #include <fstream>

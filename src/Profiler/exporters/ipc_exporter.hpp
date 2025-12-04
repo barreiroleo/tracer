@@ -4,7 +4,6 @@
 #include <IPC/message.hpp>
 
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/serialization.hpp>
 
 #include <iostream>
 #include <mutex>
@@ -30,6 +29,7 @@ public:
             .body = ss.str()
         };
 
+        std::lock_guard<std::mutex> lock(m_lock);
         if (!m_pipe.write_message(msg)) {
             std::cerr << "Failed to send message..\n";
             return;

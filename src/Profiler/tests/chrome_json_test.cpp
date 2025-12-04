@@ -1,5 +1,4 @@
 #include <Profiler/chrome_event.hpp>
-#include <Profiler/serialization.hpp>
 
 #include <print>
 

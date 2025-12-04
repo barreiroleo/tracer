@@ -4,7 +4,6 @@
 
 #include <chrome_event.hpp>
 #include <exporters/file_exporter.hpp>
-#include <serialization.hpp>
 
 #include <sstream>
 #include <thread>

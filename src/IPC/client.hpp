@@ -3,7 +3,6 @@
 #include "message.hpp"
 #include <filesystem>
 #include <fstream>
-#include <mutex>
 #include <optional>
 #include <print>
 #include <string>
@@ -27,12 +26,12 @@ public:
     [[nodiscard]]
     std::optional<std::reference_wrapper<std::ofstream>> init()
     {
-        std::once_flag retried;
-        while (!std::filesystem::exists(m_pipe_path)) {
-            std::call_once(retried, [&] {
-                std::println(stderr, "Waiting for pipe to be created at {}...", m_pipe_path);
-            });
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        namespace fs = std::filesystem;
+        if (!fs::exists(m_pipe_path)) {
+            std::println("Waiting for pipe to be created at {}...", m_pipe_path);
+            while (!fs::exists(m_pipe_path)) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
         }
         m_pipe_stream.open(m_pipe_path.data(), std::ios::binary | std::ios::out);
         if (!m_pipe_stream.is_open() || m_pipe_stream.fail()) {

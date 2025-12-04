@@ -9,3 +9,4 @@ project(
 # inc_lib = include_directories('lib')
 # add_project_arguments('-DENABLE_TRACING', language: 'cpp')
 subdir('src')
+subdir('tests')

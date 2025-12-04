@@ -52,3 +52,7 @@ test-trace-collector-run:
 	@make
 	@tmux split-window -v -l 80% "./build/src/Profiler/trace_collector --pipe /tmp/trace.pipe --output /tmp/trace.json; exec zsh"
 	@tmux split-window -h "./build/src/Profiler/tests/profiler_pipe --pipe /tmp/trace.pipe; exec zsh"
+test-trace-collector-cpp17-run:
+	@make
+	@tmux split-window -v -l 80% "./build/src/Profiler/trace_collector --pipe /tmp/trace_cpp17.pipe --output /tmp/trace_cpp17.json; exec zsh"
+	@tmux split-window -h "./build/src/Profiler/tests/profiler_pipe --pipe /tmp/trace_cpp17.pipe; exec zsh"
