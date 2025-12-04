@@ -5,11 +5,7 @@
 #include <string>
 #include <string_view>
 
-#ifdef __cpp_lib_format
-#include <format>
-#else
 #include <sstream>
-#endif
 
 namespace Tracer {
 
@@ -103,16 +99,12 @@ inline std::string serialize_to_json(const ChromeEvent& event)
         std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(name_sanitizer_buf), '"', '\'');
         event_name = name_sanitizer_buf;
     }
-#ifdef __cpp_lib_format
-    return std::format(R"({{"name":"{}","cat":"{}","ph":"{}","ts":{},"pid":{},"tid":{},"dur":{}}})",
-        event_name, event.cat, event.ph, event.ts, event.pid, event.tid, event.dur);
-#else
+
     std::stringstream ss;
     ss << R"({"name":")" << event_name << R"(","cat":")" << event.cat << R"(","ph":")" << event.ph
        << R"(","ts":)" << event.ts << R"(,"pid":)" << event.pid << R"(,"tid":)" << event.tid
        << R"(,"dur":)" << event.dur << "}";
     return ss.str();
-#endif
 }
 
 /// @brief Serialize ChromeEvent to stream format

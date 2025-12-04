@@ -11,11 +11,4 @@ profiler_dep = declare_dependency(
   dependencies: [args_dep, ipc_dep],
 )
 
-trace_collector = executable(
-  'trace_collector',
-  'trace_collector.cpp',
-  cpp_args: ['-DENABLE_TRACING'],
-  dependencies: [profiler_dep],
-)
-
 subdir('tests')
