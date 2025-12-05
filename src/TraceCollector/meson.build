@@ -3,7 +3,6 @@ trace_collector = executable(
   'main.cpp',
   cpp_args: ['-DENABLE_TRACING'],
   dependencies: [profiler_dep],
-  override_options: ['cpp_std=c++23']
 )
 
 profiler_pipe_exe = executable(
@@ -11,7 +10,6 @@ profiler_pipe_exe = executable(
   'tests/profiler_pipe_test.cpp',
   cpp_args: ['-DENABLE_TRACING'],
   dependencies: [profiler_dep],
-  override_options: ['cpp_std=c++23']
 )
 
 pipe_args = [

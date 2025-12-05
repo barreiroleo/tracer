@@ -4,6 +4,7 @@
 #include <print>
 
 #include <thread>
+#include <unistd.h>
 
 std::string MSG_LIST[] = {
     std::string(454, '='),

@@ -45,7 +45,6 @@ arg_test_exe = executable(
   'args_test',
   'tests/test.cpp',
   dependencies: [args_dep],
-  override_options: ['cpp_std=c++23'],
 )
 
 foreach case : test_pass_cases + test_fail_cases

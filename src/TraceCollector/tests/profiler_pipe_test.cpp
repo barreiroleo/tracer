@@ -3,6 +3,8 @@
 #include <chrono>
 #include <future>
 #include <print>
+#include <thread>
+#include <vector>
 
 // Simple function with IPC_TRACE_FN
 void simple_function()

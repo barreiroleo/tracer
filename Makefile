@@ -5,7 +5,8 @@ ASAN_OPTIONS="symbolize=1:color=always"
 ASAN_SYMBOLIZER_PATH=$(bash which llvm-symbolizer)
 GTEST_COLOR=1
 
-.PHONY: default gen gen-release build test test-verbose test-valgrind
+.PHONY: default gen gen-release build build-gcc build-clang
+.PHONY: test test-verbose test-valgrind
 .PHONY: coverage graph format clean
 default:
 	@if [ ! -d build ]; then $(MAKE) gen; fi
@@ -19,6 +20,14 @@ gen-release:
 
 build:
 	meson compile -C build
+
+build-gcc:
+	@CC=gcc CXX=g++ meson setup --reconfigure build-gcc
+	@meson compile -C build-gcc
+
+build-clang:
+	@CC=clang CXX=clang++ meson setup --reconfigure build-clang
+	@meson compile -C build-clang
 
 test:
 	meson test -C build

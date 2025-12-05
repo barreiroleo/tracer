@@ -1,10 +1,10 @@
 #include "common_args.hpp"
 
-#include <print>
 #include <server.hpp>
-
 #include <print>
+
 #include <thread>
+#include <unistd.h>
 
 void run_listener(IPC::PipeServer& server)
 {

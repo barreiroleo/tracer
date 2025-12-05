@@ -1,6 +1,6 @@
 # Tracer
 
-Lightweight C++23 profiler that generates Chrome Trace Event Format traces for visualization in Perfetto and Firefox Profiler.
+Lightweight profiler that generates Chrome Trace Event Format traces for visualization in Perfetto and Firefox Profiler.
 
 ## Features
 
@@ -9,6 +9,21 @@ Lightweight C++23 profiler that generates Chrome Trace Event Format traces for v
 - RAII-based scope tracing
 - Chrome Trace Event Format (JSON) output
 - Compatible with [Perfetto](https://ui.perfetto.dev) and [Firefox Profiler](https://profiler.firefox.com)
+- **Client libraries compatible with C++14 consumers, compile with C++17 minimum**
+- **Server-side (TraceCollector) uses modern C++23 features**
+
+## C++ Standard Requirements
+
+The project has different C++ standard requirements for different components:
+
+### Client-Side Libraries (for integration into your code)
+- **IPC Client** (`ipc_client_lib`): C++17 minimum, linkable from C++14 code
+- **Profiler** (`profiler_lib`): C++17 minimum, linkable from C++14 code
+
+### Server-Side Components (standalone trace collector)
+- **TraceCollector** (`trace_collector`): C++23 required
+- **IPC Server** (`ipc_server_lib`): C++23 required
+- **Args Parser** (`args_lib`): C++23 required
 
 ## Quick Start
 

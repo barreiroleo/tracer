@@ -1,6 +1,7 @@
 #include "args.hpp"
 
 #include <print>
+#include <span>
 #include <string_view>
 
 namespace Args {
@@ -45,11 +46,11 @@ auto parse_args_impl(int argc, char* argv[], const std::function<Result(std::str
         return false;
     }
 
-    for (auto it = args.cbegin() + 1; it != args.cend(); ++it) {
+    for (auto it = args.begin() + 1; it != args.end(); ++it) {
         const std::string_view key { *it };
 
         std::string_view value = "";
-        if (std::next(it) != args.cend()) {
+        if (std::next(it) != args.end()) {
             if (const std::string_view next = *std::next(it); !next.starts_with("-")) {
                 value = *std::next(it);
                 ++it;

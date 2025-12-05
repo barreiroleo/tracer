@@ -93,7 +93,7 @@ struct ChromeEvent {
 /// @return JSON string representation
 inline std::string serialize_to_json(const ChromeEvent& event)
 {
-    std::string event_name = event.name ;
+    std::string event_name = event.name;
     if (event.name.find('"') != std::string::npos) {
         std::string sanitized;
         std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(sanitized), '"', '\'');
