@@ -65,7 +65,7 @@ inline std::istream& deserialize(std::istream& in, Message& msg)
     in.read(reinterpret_cast<char*>(&msg.pid), sizeof(msg.pid));
     in.read(reinterpret_cast<char*>(&length), sizeof(length));
     msg.body.resize(length);
-    in.read(msg.body.data(), length);
+    in.read(&msg.body[0], length);
     return in;
 }
 

@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <string_view>
 
 #include <sstream>
 
@@ -25,11 +24,11 @@ namespace Tracer {
 //   "samples": [...],
 // }
 
-static constexpr std::string_view TRACE_EVENTS {
+static constexpr const char* TRACE_EVENTS {
     R"({"traceEvents":[)"
 };
 
-static constexpr std::string_view TRACE_EVENT_BODY {
+static constexpr const char* TRACE_EVENT_BODY {
     R"(],"displayTimeUnit":"ns"})"
 };
 
@@ -94,11 +93,11 @@ struct ChromeEvent {
 /// @return JSON string representation
 inline std::string serialize_to_json(const ChromeEvent& event)
 {
-    std::string name_sanitizer_buf {};
-    std::string_view event_name = event.name;
+    std::string event_name = event.name ;
     if (event.name.find('"') != std::string::npos) {
-        std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(name_sanitizer_buf), '"', '\'');
-        event_name = name_sanitizer_buf;
+        std::string sanitized;
+        std::replace_copy(event.name.begin(), event.name.end(), std::back_inserter(sanitized), '"', '\'');
+        event_name = std::move(sanitized);
     }
 
     std::stringstream ss;

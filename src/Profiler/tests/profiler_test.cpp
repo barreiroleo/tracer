@@ -185,7 +185,7 @@ void test_combined_scenario()
 
 int main(int /* argc */, char* /* argv */[])
 {
-    TRACE_SETUP(std::format("trace-{:%Y-%m-%d_%H-%M}.json", std::chrono::system_clock::now()));
+    TRACE_SETUP(std::format("trace-{:%Y-%m-%d_%H-%M}.json", std::chrono::system_clock::now()).c_str());
 
     std::println("Starting comprehensive profiler test...\n");
     TRACE_FN();

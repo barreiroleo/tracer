@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
     const ArgsOpts options = Args::parse<ArgsOpts>(argc, argv, command_handler);
     std::string_view pipe_path = options.pipe_path;
 
-    IPC::PipeClient client { pipe_path };
-    if (!client.init().has_value()) {
+    IPC::PipeClient client { pipe_path.data() };
+    if (!client.init()) {
         std::exit(EXIT_FAILURE);
     }
 

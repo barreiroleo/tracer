@@ -6,17 +6,11 @@
 #include <fstream>
 #include <mutex>
 
-#ifdef ENABLE_TRACING
-#define TRACE_SETUP(file) Tracer::FileExporter::instance(file)
-#else
-#define TRACE_SETUP(file)
-#endif // ENABLE_TRACING
-
 namespace Tracer {
 
 class FileExporter {
 public:
-    static FileExporter& instance(std::string_view output_file = "trace.json")
+    static FileExporter& instance(const char* output_file = "trace.json")
     {
         static FileExporter instance { output_file };
         return instance;
@@ -38,8 +32,8 @@ public:
     }
 
 private:
-    FileExporter(std::string_view output_file)
-        : m_trace_stream(std::ofstream(output_file.data()))
+    FileExporter(const char* output_file)
+        : m_trace_stream(std::ofstream(output_file))
     {
         if (!m_trace_stream.is_open()) {
             throw std::runtime_error("Failed to open trace output file.");

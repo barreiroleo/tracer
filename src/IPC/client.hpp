@@ -3,20 +3,17 @@
 #include "message.hpp"
 
 #include <fstream>
-#include <optional>
 #include <string>
 
 namespace IPC {
 
 class PipeClient {
 public:
-    PipeClient(std::string_view path);
+    PipeClient(const char* path);
     ~PipeClient();
 
-    [[nodiscard]]
-    std::optional<std::reference_wrapper<std::ofstream>> init();
+    bool init();
 
-    [[nodiscard]]
     bool write_message(const Message& msg);
 
 private:

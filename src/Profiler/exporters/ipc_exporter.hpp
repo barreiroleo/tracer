@@ -13,7 +13,7 @@ namespace Tracer {
 
 class IPCExporter {
 public:
-    static IPCExporter& instance(std::string_view pipe_path = "/tmp/trace.pipe")
+    static IPCExporter& instance(const char* pipe_path = "/tmp/trace.pipe")
     {
         static IPCExporter instance { pipe_path };
         return instance;
@@ -36,10 +36,10 @@ public:
     }
 
 private:
-    IPCExporter(std::string_view pipe_path)
+    IPCExporter(const char* pipe_path)
         : m_pipe(pipe_path)
     {
-        if (!m_pipe.init().has_value()) {
+        if (!m_pipe.init()) {
             std::exit(EXIT_FAILURE);
         }
     }

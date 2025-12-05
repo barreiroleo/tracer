@@ -10,7 +10,7 @@
 
 namespace IPC {
 
-PipeClient::PipeClient(std::string_view path)
+PipeClient::PipeClient(const char* path)
     : m_pid(getpid())
     , m_pipe_path(path)
 {
@@ -24,7 +24,7 @@ PipeClient::~PipeClient()
     }
 }
 
-std::optional<std::reference_wrapper<std::ofstream>> PipeClient::init()
+bool PipeClient::init()
 {
     namespace fs = std::filesystem;
     if (!fs::exists(m_pipe_path)) {
@@ -36,9 +36,9 @@ std::optional<std::reference_wrapper<std::ofstream>> PipeClient::init()
     m_pipe_stream.open(m_pipe_path.data(), std::ios::binary | std::ios::out);
     if (!m_pipe_stream.is_open() || m_pipe_stream.fail()) {
         std::cerr << "Failed to open pipe.\n";
-        return std::nullopt;
+        return false;
     }
-    return m_pipe_stream;
+    return true;
 }
 
 bool PipeClient::write_message(const Message& msg)

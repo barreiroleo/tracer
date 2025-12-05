@@ -8,7 +8,7 @@ namespace Tracer {
 template <class T = FileExporter>
 class TraceScope {
 public:
-    TraceScope(std::string_view name, std::string_view cat = "Default");
+    TraceScope(const char* name, const char* cat = "Default");
     ~TraceScope();
 
 private:
@@ -20,4 +20,3 @@ private:
 };
 
 } // namespace Tracer
-

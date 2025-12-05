@@ -31,7 +31,7 @@ inline void async_flush_events(Tracer::FileExporter& exporter, std::vector<std::
 
 inline void run(IPC::PipeServer& server, std::string_view output_file)
 {
-    Tracer::FileExporter& exporter = Tracer::FileExporter::instance(output_file);
+    Tracer::FileExporter& exporter = Tracer::FileExporter::instance(output_file.data());
 
     std::vector<std::string> raw_events {};
     raw_events.reserve(100);

@@ -5,10 +5,6 @@
 #include <syscall.h>
 #include <unistd.h>
 
-// Explicit template instantiation
-template class Tracer::TraceScope<Tracer::FileExporter>;
-template class Tracer::TraceScope<Tracer::IPCExporter>;
-
 namespace Tracer {
 
 /// @brief Get a unique timestamp that's guaranteed to be monotonically increasing
@@ -30,7 +26,7 @@ int64_t get_unique_timestamp()
 }
 
 template <class T>
-TraceScope<T>::TraceScope(std::string_view name, std::string_view cat)
+TraceScope<T>::TraceScope(const char* name, const char* cat)
     : m_name(name)
     , m_cat(cat)
     , m_start_time(get_unique_timestamp()) {};
@@ -67,3 +63,7 @@ void TraceScope<T>::write_trace()
 }
 
 } // namespace Tracer
+
+// Explicit template instantiation
+template class Tracer::TraceScope<Tracer::FileExporter>;
+template class Tracer::TraceScope<Tracer::IPCExporter>;

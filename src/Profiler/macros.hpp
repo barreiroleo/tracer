@@ -14,11 +14,13 @@ using IPCTrace = TraceScope<IPCExporter>;
 
 // Macros for file-based tracing (default)
 #ifdef ENABLE_TRACING
+#define TRACE_SETUP(file) Tracer::FileExporter::instance(file)
 #define TRACE_SCOPE_CAT(name, cat) Tracer::Trace trace_##__LINE__(name, cat)
 #define TRACE_SCOPE(name) Tracer::Trace trace_##__LINE__(name)
 #define TRACE_FN_CAT(cat) TRACE_SCOPE_CAT(__FUNCTION__, cat)
 #define TRACE_FN() TRACE_SCOPE(__FUNCTION__)
 #else
+#define TRACE_SETUP(file)
 #define TRACE_SCOPE_CAT(name, cat)
 #define TRACE_SCOPE(name)
 #define TRACE_FN_CAT(cat)
