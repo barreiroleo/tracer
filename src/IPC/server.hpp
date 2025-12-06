@@ -6,7 +6,7 @@
 #include <functional>
 
 namespace IPC {
-using FileDescriptor = int;
+
 using MessageHandler = std::function<void(IPC::Message)>;
 using StopHandler = std::function<void()>;
 
@@ -15,18 +15,20 @@ public:
     PipeServer(std::string_view path);
     ~PipeServer();
 
-    [[nodiscard]]
-    std::optional<std::reference_wrapper<std::ifstream>> init();
+    [[nodiscard]] bool init();
 
+    /// @brief Run the server loop.
+    ///
+    /// MessageKind::DATA messages are passed to the provided message_handler.
+    /// MessageKind::STOP is handled internally to manage active clients.
+    ///
+    /// @param[in] message_handler Function to handle incoming messages.
+    /// @param[in] stop_handler Function to handle server stop event.
     void run(MessageHandler message_handler, StopHandler stop_handler);
 
-    [[nodiscard]]
-    std::optional<Message> read_message();
-
 private:
-    pid_t m_pid {};
     std::string m_pipe_name;
     std::ifstream m_pipe_stream;
 };
 
-}
+} // namespace IPC

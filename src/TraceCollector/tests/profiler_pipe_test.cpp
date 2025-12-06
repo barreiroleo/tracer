@@ -4,6 +4,7 @@
 #include <future>
 #include <print>
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
 // Simple function with IPC_TRACE_FN
@@ -185,14 +186,32 @@ void test_combined_scenario()
     }
 }
 
+void test_fork()
+{
+    IPC_TRACE_FN_CAT("Fork");
+    pid_t pid = fork();
+    if (pid < 0) {
+        return std::println(stderr, "Fork failed");
+    }
+    const auto child_process = []() {
+        std::println("Child process running: {}", getpid());
+    };
+    const auto parent_process = [pid]() {
+        std::println("Parent process ({}), child pid: {}", getpid(), pid);
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    };
+    (pid == 0) ? child_process() : parent_process();
+}
+
 int main(int argc, char* argv[])
 {
-    const char* pipe_path = (argc < 2) ? "/tmp/tracer-trace_pipe_test.pipe"
-                                       : argv[2];
+    const char* pipe_path = (argc < 2) ? "/tmp/tracer-trace_pipe_test.pipe" : argv[2];
+
+    std::println("Starting profiler test...\n");
     IPC_TRACE_SETUP(pipe_path);
 
-    std::println("Starting comprehensive profiler test...\n");
     IPC_TRACE_FN();
+    test_fork();
 
     std::println("1. Testing simple functions...");
     simple_function();

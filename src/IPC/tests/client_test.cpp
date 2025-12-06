@@ -31,6 +31,7 @@ void send_stop_message(IPC::PipeClient& client)
     static IPC::Message msg {
         .kind = IPC::MessageKind::STOP,
         .pid = getpid(),
+        .body = {},
     };
     if (!client.write_message(msg)) {
         std::println(stderr, "PID {}: Failed to send message.", msg.pid);

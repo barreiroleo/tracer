@@ -8,6 +8,7 @@
 #include <iostream>
 #include <mutex>
 #include <sstream>
+#include <unistd.h>
 
 namespace Tracer {
 
@@ -24,9 +25,11 @@ public:
         std::stringstream ss;
         ss << result;
 
-        IPC::Message msg {};
-        msg.kind = IPC::MessageKind::DATA;
-        msg.body = ss.str();
+        IPC::Message msg {
+            /* kind */ IPC::MessageKind::DATA,
+            /* pid  */ result.pid,
+            /* body */ ss.str(),
+        };
 
         std::lock_guard<std::mutex> lock(m_lock);
         if (!m_pipe.write_message(msg)) {
@@ -46,9 +49,11 @@ private:
 
     ~IPCExporter()
     {
-        IPC::Message msg;
-        msg.kind = IPC::MessageKind::STOP;
-        msg.body = {};
+        IPC::Message msg {
+            /* kind */ IPC::MessageKind::STOP,
+            /* pid  */ getpid(),
+            /* body */ {},
+        };
         std::ignore = m_pipe.write_message(msg);
     }
 

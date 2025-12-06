@@ -19,20 +19,14 @@ enum class MessageKind : uint8_t {
 };
 
 struct Message {
-    MessageKind kind {};
-    int pid {};
-    std::string body {};
+    MessageKind kind;
+    int pid;
+    std::string body;
 
-    size_t size() const
-    {
-        return sizeof(kind) + sizeof(pid) + body.length();
-    }
+    size_t size() const { return sizeof(kind) + sizeof(pid) + body.length(); }
 
-    void inspect() const
-    {
-        std::cout << "Size: " << size() << '\n'
-                  << to_json() << '\n';
-    }
+    void inspect() const { std::cout << "Size: " << size() << '\n'
+                                     << to_json() << '\n'; }
 
     std::string to_json() const
     {

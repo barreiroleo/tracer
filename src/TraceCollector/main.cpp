@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 
     // Initialize server
     IPC::PipeServer server { pipe_path };
-    if (!server.init().has_value()) {
+    if (!server.init()) {
         std::println(stderr, "Failed to initialize server");
         std::exit(EXIT_FAILURE);
     }
