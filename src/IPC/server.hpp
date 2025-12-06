@@ -4,11 +4,16 @@
 
 #include <fstream>
 #include <functional>
+#include <set>
 
 namespace IPC {
-
 using MessageHandler = std::function<void(IPC::Message)>;
 using StopHandler = std::function<void()>;
+
+enum class HandlerResult {
+    CONTINUE,
+    STOP,
+};
 
 class PipeServer {
 public:
@@ -27,6 +32,10 @@ public:
     void run(MessageHandler message_handler, StopHandler stop_handler);
 
 private:
+    HandlerResult client_handler(const Message& msg);
+
+    int m_timeout_ms = 1000;
+    std::set<int> m_active_clients {};
     std::string m_pipe_name;
     std::ifstream m_pipe_stream;
 };

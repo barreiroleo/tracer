@@ -198,7 +198,7 @@ void test_fork()
     };
     const auto parent_process = [pid]() {
         std::println("Parent process ({}), child pid: {}", getpid(), pid);
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     };
     (pid == 0) ? child_process() : parent_process();
 }
