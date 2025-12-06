@@ -1,12 +1,12 @@
 ipc_client_lib = static_library(
   'ipc_client',
-  'client.cpp',
+  ['client.cpp', 'message.cpp'],
   override_options: ['cpp_std=c++17'],
 )
 
 ipc_server_lib = static_library(
   'ipc_server',
-  'server.cpp',
+  ['server.cpp', 'message.cpp'],
   override_options: ['cpp_std=c++23'],
 )
 

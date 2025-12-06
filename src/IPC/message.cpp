@@ -1,0 +1,56 @@
+// TODO(lbarreiro): Use explicit endianness for serialization/deserialization.
+// reinterpret_cast<char*> is not portable between little-endian/big-endian.
+// It will block network communication support.
+
+#include "message.hpp"
+
+#include <sstream>
+
+namespace IPC {
+
+size_t Message::size() const
+{
+    return sizeof(kind) + sizeof(pid) + body.length();
+}
+
+void Message::inspect() const
+{
+    std::cout << "Size: " << size() << '\n'
+              << to_json() << '\n';
+}
+
+std::string Message::to_json() const
+{
+    std::stringstream ss;
+    ss << "{\n"
+       << "  kind:" << static_cast<uint8_t>(kind) << ",\n"
+       << "  pid:" << pid << ",\n"
+       << "  length:" << body.length() << ",\n"
+       << "  body: \n"
+       << body << "\n"
+       << "}";
+    return ss.str();
+}
+
+std::ostream& serialize(std::ostream& os, const Message& msg)
+{
+    size_t length = msg.body.length();
+    os.write(reinterpret_cast<const char*>(&msg.kind), sizeof(msg.kind));
+    os.write(reinterpret_cast<const char*>(&msg.pid), sizeof(msg.pid));
+    os.write(reinterpret_cast<const char*>(&length), sizeof(length));
+    os.write(msg.body.data(), length);
+    return os;
+}
+
+std::istream& deserialize(std::istream& in, Message& msg)
+{
+    size_t length {};
+    in.read(reinterpret_cast<char*>(&msg.kind), sizeof(msg.kind));
+    in.read(reinterpret_cast<char*>(&msg.pid), sizeof(msg.pid));
+    in.read(reinterpret_cast<char*>(&length), sizeof(length));
+    msg.body.resize(length);
+    in.read(&msg.body[0], length);
+    return in;
+}
+
+} // namespace IPC

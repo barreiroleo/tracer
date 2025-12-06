@@ -14,7 +14,7 @@ Options:
     --help              Show this help message
 )";
 
-inline auto command_handler(std::string_view key, std::string_view value, ArgsOpts& parser_out) -> Args::Result
+auto command_handler(std::string_view key, std::string_view value, ArgsOpts& parser_out) -> Args::Result
 {
     using Code = Args::Result::Code;
 

@@ -6,6 +6,7 @@
 #include <Profiler/exporters/file_exporter.hpp>
 
 #include <print>
+#include <sstream>
 #include <thread>
 
 inline void flush_events(Tracer::FileExporter& exporter, std::vector<std::string> events)
