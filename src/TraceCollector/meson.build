@@ -5,6 +5,12 @@ trace_collector = executable(
   dependencies: [args_dep, profiler_dep],
 )
 
+profiler_file_exe = executable(
+  'profiler_file',
+  'tests/profiler_file_test.cpp',
+  cpp_args: ['-DENABLE_TRACING'],
+  dependencies: [profiler_dep],
+)
 profiler_pipe_exe = executable(
   'profiler_pipe',
   'tests/profiler_pipe_test.cpp',
