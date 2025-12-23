@@ -6,6 +6,12 @@
 
 namespace Tracer {
 
+IPCExporter& IPCExporter::instance(const char* pipe_path)
+{
+    static IPCExporter instance { pipe_path };
+    return instance;
+}
+
 void IPCExporter::push_trace(const ChromeEvent& result)
 {
     std::stringstream ss;

@@ -9,11 +9,7 @@ namespace Tracer {
 
 class IPCExporter {
 public:
-    static IPCExporter& instance(const char* pipe_path = "/tmp/trace.pipe")
-    {
-        static IPCExporter instance { pipe_path };
-        return instance;
-    }
+    static IPCExporter& instance(const char* pipe_path = "/tmp/trace.pipe");
 
     void push_trace(const ChromeEvent& result);
 

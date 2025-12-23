@@ -4,6 +4,12 @@
 
 namespace Tracer {
 
+FileExporter& FileExporter::instance(const char* output_file)
+{
+    static FileExporter instance { output_file };
+    return instance;
+}
+
 FileExporter::FileExporter(const char* output_file)
     : m_trace_stream(std::ofstream(output_file))
 {

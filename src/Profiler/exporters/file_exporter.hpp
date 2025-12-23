@@ -9,11 +9,7 @@ namespace Tracer {
 
 class FileExporter {
 public:
-    static FileExporter& instance(const char* output_file = "trace.json")
-    {
-        static FileExporter instance { output_file };
-        return instance;
-    }
+    static FileExporter& instance(const char* output_file = "trace.json");
 
     void push_trace(const ChromeEvent& result);
 
